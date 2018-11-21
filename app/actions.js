@@ -18,7 +18,7 @@ const {
 
 const DEFAULT_CHANNEL = 'default'
 const HOME_DIR = homedir()
-const DATA_DIR = path.join(HOME_DIR, '.cabal-desktop')
+const DATA_DIR = path.join(HOME_DIR, '.cabal-desktop', `v${Cabal.databaseVersion}`)
 const TEMP_DIR = path.join(DATA_DIR, '.tmp')
 const STATE_FILE = path.join(DATA_DIR, 'cabals.json')
 const DEFAULT_USERNAME = 'conspirator'
@@ -132,7 +132,7 @@ export const viewChannel = ({addr, channel}) => dispatch => {
   dispatch(getMessages({addr, channel, count: 100}))
 }
 
-export const changeScreen = ({screen}) => ({ type: 'CHANGE_SCREEN', screen })
+export const changeScreen = ({screen, addr}) => ({ type: 'CHANGE_SCREEN', screen, addr })
 
 export const addCabal = ({addr, input, username}) => dispatch => {
   if (!addr) {
@@ -326,7 +326,7 @@ async function lskeys () {
 
 function encodeStateForKey (key) {
   const username = (cabals[key] && cabals[key].username) || DEFAULT_USERNAME
-  return `{"username":"${username}","addr":"${key}"}`
+  return JSON.stringify({"username":username,"addr":key})
 }
 
 async function readstate () {
